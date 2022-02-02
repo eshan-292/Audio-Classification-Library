@@ -4,8 +4,8 @@ using namespace std;
 
 int main(int argc, char const *argv[])
 {
-	vector<vector<float> > matrix1(1000,vector<float>(1000,-0.212123));
-	vector<vector<float> > matrix2(1000,vector<float>(1000,1.34123));
+	vector<vector<float> > matrix1(400,vector<float>(1000,-0.212123));
+	vector<vector<float> > matrix2(1000,vector<float>(400,1.34123));
 	vector<vector<float> > result(matrix1.size(),vector<float>(matrix2[0].size(),0));
 
 	for(int i=0;i<matrix1.size();i++){
