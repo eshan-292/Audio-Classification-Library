@@ -94,112 +94,23 @@ vector<vector<float>> fullyConnected(vector<vector<float>> &inputMatrix, vector<
 
 int main(int argc, char const *argv[])
 {
-	vector<vector<float> > matrix1(1000,vector<float>(1000,-0.212123));			// test case 1 (1000x1000,1000x1000,1000x1000)
-	vector<vector<float> > matrix2(1000,vector<float>(1000,1.34123));
-	vector<vector<float> > matrix3(1000,vector<float>(1000,0.323));
-	auto start = chrono::high_resolution_clock::now();
-
-	// start = clock();
-
-	fullyConnected(matrix1,matrix2,matrix3, argv[1]);
-
-	// end = clock();
-	auto end = chrono::high_resolution_clock::now();
-
+	vector<vector<float>> inputMatrix,weightMatrix,biasMatrix;
 	ofstream ofs;
-	ofs.open("pthread.dat");
-	double time_taken = 
-      			chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+	ofs.open("pthreadMultBox.dat");
+	auto start=chrono::high_resolution_clock::now();
+	auto end=chrono::high_resolution_clock::now();
+	double time_taken;
+	for(int i=100;i<=400;i++){
+		inputMatrix = generateRandomMatrix(i,i,10);
+		weightMatrix = generateRandomMatrix(i,i,10);
+		biasMatrix = generateRandomMatrix(i,i,10);
+		start = chrono::high_resolution_clock::now();
 
-     time_taken*= 1e-9;
-	ofs<<time_taken<<"\n";
-
-
-	matrix1= generateRandomMatrix(200,200,2);									// test case 2 (200x200, 200x300, 200x300)
-	matrix2 = generateRandomMatrix(200,300,5);
-	matrix3 = generateRandomMatrix(200,300,7);
-
-
-	start = chrono::high_resolution_clock::now();
-	fullyConnected(matrix1,matrix2,matrix3, argv[1]);
-
-	end = chrono::high_resolution_clock::now();
-
-	time_taken = 
-      			chrono::duration_cast<chrono::nanoseconds>(end - start).count();
-
-     time_taken*= 1e-9;
-	ofs<<time_taken<<"\n";
-
-	matrix1= generateRandomMatrix(400,900,8);									// test case 3 (400x900, 900x700, 400x700)
-	matrix2 = generateRandomMatrix(900,700,4);
-	matrix3 = generateRandomMatrix(400,700,6);
-
-
-	start = chrono::high_resolution_clock::now();
-	fullyConnected(matrix1,matrix2,matrix3, argv[1]);
-
-	end = chrono::high_resolution_clock::now();
-
-	time_taken = 
-      			chrono::duration_cast<chrono::nanoseconds>(end - start).count();
-
-     time_taken*= 1e-9;
-	ofs<<time_taken<<"\n";
-
-
-	matrix1= generateRandomMatrix(4000,1000,4.849);									// test case 4 (4000x1000, 1000x300, 4000x300)
-	matrix2 = generateRandomMatrix(1000,300,41.238974);
-	matrix3 = generateRandomMatrix(4000,300,42.1913);
-
-
-	start = chrono::high_resolution_clock::now();
-	fullyConnected(matrix1,matrix2,matrix3, argv[1]);
-
-	end = chrono::high_resolution_clock::now();
-
-	time_taken = 
-      			chrono::duration_cast<chrono::nanoseconds>(end - start).count();
-
-     time_taken*= 1e-9;
-	ofs<<time_taken<<"\n";
-
-
-
-//SMALL TEST CASES
-
-	matrix1= generateRandomMatrix(4,6,439.23);									// test case 5 (4x6, 6x7, 4x7)
-	matrix2 = generateRandomMatrix(6,7,41.238974);
-	matrix3 = generateRandomMatrix(4,7,42.1913);
-
-
-	start = chrono::high_resolution_clock::now();
-	fullyConnected(matrix1,matrix2,matrix3, argv[1]);
-
-	end = chrono::high_resolution_clock::now();
-
-	time_taken = 
-      			chrono::duration_cast<chrono::nanoseconds>(end - start).count();
-
-     time_taken*= 1e-9;
-	ofs<<time_taken<<"\n";
-
-
-	matrix1= generateRandomMatrix(10,20,4.132);									// test case 6 (10x20, 20x15, 10x15)
-	matrix2 = generateRandomMatrix(20,15,54.8774);
-	matrix3 = generateRandomMatrix(10,15,445.1913);
-
-
-	start = chrono::high_resolution_clock::now();
-	fullyConnected(matrix1,matrix2,matrix3, argv[1]);
-
-	end = chrono::high_resolution_clock::now();
-
-	time_taken = 
-      			chrono::duration_cast<chrono::nanoseconds>(end - start).count();
-
-     time_taken*= 1e-9;
-	ofs<<time_taken<<"\n";
-
+		fullyConnected(inputMatrix,weightMatrix,biasMatrix,argv[1]);
+		end = chrono::high_resolution_clock::now();
+		time_taken = chrono::duration_cast<chrono::nanoseconds>(end - start).count();
+     	time_taken*= 1e-9;
+		ofs<<time_taken<<"\n";
+	}
 	return 0;
 }
