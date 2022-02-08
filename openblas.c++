@@ -19,14 +19,26 @@ int main(){
     double c[3*3] = {0,0,0,0,0,0,0,0,0};
 
     s = clock();
-    for(int i=0 ; i<3 ; i++)
+    /*for(int i=0 ; i<3 ; i++)
         {
             for(int j=0;j<3;j++){
                 for (int p = 0; p < 2 ; ++p) 
                     c[i*3 +j] = c[i*3 +j] + a[i*2+p]*b[p*3+j];         
             }
         }
-
+    */
+    double sum=0; 
+    for(int i=0;i<3;i++){
+        for(int j=0;j<3;j++){
+            sum=0;
+            for(int k=0;k<3;k++){
+                sum+= *((a + c1*i) + k) * *((b + c2*k) + j) ;
+            }
+            c[i*3 + j]=sum;
+        }
+    }
+ 
+ 
     f = clock();
     printf("Naive Matrix Multiplication takes %f seconds\n",(f-s)/1000);
 
