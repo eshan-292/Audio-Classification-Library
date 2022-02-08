@@ -28,8 +28,10 @@ int main(){
         }
 
     f = clock();
-    printf("Naive Matrix Multiplication take %f seconds\n",(f-s)/1000);
+    printf("Naive Matrix Multiplication takes %f seconds\n",(f-s)/1000);
+
     double temp=0;
+    //printing the elements of the matrix
     for(int i=0;i<3;i++){
         for(int j=0;j<3;j++){
             temp = c[i*3 + j] ;
@@ -42,13 +44,13 @@ int main(){
 
     s = clock();
 
-    for( int k=0 ; k<1 ;k++)
-    {
-        cblas_dgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, 3,    3,    2, 1.0,   &a[0],   2, &b[0], 3,  0.0, c,  3);
-    }
+    //matrix multiplication using cblas_dgemm
+    cblas_dgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, 3,    3,    2, 1.0,   &a[0],   2, &b[0], 3,  0.0, c,  3);
+    
+ 
     f = clock();
 
-
+    //printing the elements of the matrix
     for(int i=0;i<3;i++){
         for(int j=0;j<3;j++){
             temp = c[i*3 + j] ;
@@ -59,6 +61,6 @@ int main(){
         printf("\n") ;
     }
 
-    printf("OpenBLAS : %f seconds\n",(f-s)/1000);
+    printf("OpenBLAS Implementation takes %f seconds\n",(f-s)/1000);
     return 0;
 }
