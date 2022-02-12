@@ -67,49 +67,90 @@ void outputMatrix(string fileName, vector<vector<float>> &result){ // outMatrix 
 ////////////////////////////////////////////////////////////////////////
 
 
+
 struct arguments
 {
-	vector<float> matrix1Row;								// matrix1Row is a row of the first matrix whose product is to be taken with matrix2
-	vector<vector<float>> matrix2;							// matrix2 is the second matrix which comes on the right hand side of the product
-	vector<vector<float>>*result;							// result is another matrix to which we will be storing the matrix multiplication
-	int row;
+	vector<vector<float>> matrix1;				// matrix1 and matrix2 are the matrices whose product has to be found
+	vector<vector<float>> matrix2;
+	vector<vector<float>>*result;				// resultant product will be stored in the matrix result (which will be passed by reference)
+	int startRow;								// startRow and endRow together gives the portion of the matrix1 which is to be multiplied with matrix2 by the given thread
+	int endRow;
 };
-
-
-void* computeVectorProduct(void* args){  					// take a structure of arguments
+void* computeVectorProduct(void* args){  							// take a structure of arguments
 	struct arguments *myargs = (struct arguments *)args;
-		for(int j=0;j<(myargs->matrix2)[0].size();j++){		// we will compute one row of the resultant matrix by taking each row of first matrix and multiplying it with all columns of the second matrix via 1 thread
-			for(int i=0;i<(myargs->matrix1Row).size();i++){
-				(*(myargs->result))[myargs->row][j]+=((myargs->matrix1Row)[i])*((myargs->matrix2[i][j]));
+
+		for (int i = myargs->startRow; i < myargs->endRow; ++i)		// for every row in a particular segment of matrix1
+		{
+			for(int j=0;j<(myargs->matrix2)[0].size();j++){			// for every column of matrix2
+				for(int k=0;k<myargs->matrix1[0].size();k++){
+					(*(myargs->result))[i][j]+=(myargs->matrix1[i][k])*(myargs->matrix2[k][j]); // we will find the partial product of the two matrices and store it in the apt columns of result
+				}
 			}
 		}
+	
 	return NULL;
 }
 
 
 vector<vector<float>> innerProductPthread(vector<vector<float>> &inputMatrix, vector<vector<float>> &weightMatrix){
 	
-	int inputMatrixRowSize = inputMatrix.size();
-	int inputMatrixColSize = inputMatrix[0].size();
-	int weightMatrixRowSize = weightMatrix.size();
-	int weightMatrixColSize = weightMatrix[0].size();
+
+	vector<vector<float> > result(inputMatrix.size(),vector<float>(weightMatrix[0].size(),0));	//matrix to store result of multiplication
+	pthread_t thread_id1, thread_id2, thread_id3, thread_id4;			// creating four threads to compute product parellely
+	// struct arguments args[matrix1.size()];	//creating an array of structures for passing arguments to each thread
+
+	int n1 = inputMatrix.size()/4;				// dividing the rows of input matrix into 4 almost equal parts 0 - n1, n1 - n2, n2 - n3
+
+	int n2 = inputMatrix.size()/4 + n1;
+
+	int n3 = inputMatrix.size()/4 + n2;
+
+	int n4 = inputMatrix.size()/4 + n3 + inputMatrix.size()%4;
+	struct arguments args1, args2, args3, args4;
+
+	args1.startRow = 0;							// passing the required arguments to thread_id1 and creating the thread
+	args1.endRow = n1;
+	args1.matrix1 = inputMatrix;
+	args1.matrix2 = weightMatrix;
+	args1.result = &result;
+
+	pthread_create(&thread_id1,NULL,&computeVectorProduct,(void *)&(args1));	
 
 
-	vector<vector<float> > result(inputMatrixRowSize,vector<float>(weightMatrixColSize,0));
-	pthread_t thread_id[inputMatrixRowSize]; 				// create an array of threads, one thread for each row of inputMatrix
-	struct arguments args[inputMatrixRowSize];	//creating an array of structures for passing arguments to each thread
-	for(int i=0;i<inputMatrixRowSize;i++){					// for ith every row of first matrix we will create a thread, which will execute the computeVectorProduct function, and compute the ith row of the result by multiplying ith row of inputMatrix with all columns of weightMatrix
-			args[i].matrix1Row = inputMatrix[i];				// passing a particular row of inputMatrix
-			args[i].matrix2 = weightMatrix;							// matrix2 argument would be the weightMatrix for all the threaded functions
-			args[i].result = &result;									// result argument would be the matrix result (initialized to 0) for all the threaded functions
+	args2.startRow = n1;						// passing the required arguments to thread_id2 and creating the thread
+	args2.endRow = n2;
+	args2.matrix1 = inputMatrix;
+	args2.matrix2 = weightMatrix;
+	args2.result = &result;
 
-			args[i].row = i;									// passing the index of the row of inputMatrix 
-			pthread_create(&thread_id[i],NULL,&computeVectorProduct,(void *)&(args[i])); // creating a thread to compute the ith row of result matrix	
-	}
-	for(int i=0;i<inputMatrixRowSize;i++){
-		pthread_join(thread_id[i],NULL);					// waiting for all the threads to execute
-	}
+	pthread_create(&thread_id2,NULL,&computeVectorProduct,(void *)&(args2));	
+
+
+	args3.startRow = n2;						// passing the required arguments to thread_id3 and creating the thread
+	args3.endRow = n3;
+	args3.matrix1 = inputMatrix;
+	args3.matrix2 = weightMatrix;
+	args3.result = &result;
+
+	pthread_create(&thread_id3,NULL,&computeVectorProduct,(void *)&(args3));	
+
+
+	args4.startRow = n3;						// passing the required arguments to thread_id4 and creating the thread
+	args4.endRow = n4;
+	args4.matrix1 = inputMatrix;
+	args4.matrix2 = weightMatrix;
+	args4.result = &result;
+
+
+	pthread_create(&thread_id4,NULL,&computeVectorProduct,(void *)&(args4));	
+
+	pthread_join(thread_id1, NULL);				// joining the threads
+	pthread_join(thread_id2, NULL);
+	pthread_join(thread_id3, NULL);
+	pthread_join(thread_id4, NULL);
+
 	return result;
+
 }
 
 
@@ -128,8 +169,8 @@ vector<vector<float>> innerProductPthread(vector<vector<float>> &inputMatrix, ve
 
 vector<vector<float>> fullyConnectedPthread(vector<vector<float>> &inputMatrix, vector<vector<float>>&weightMatrix, vector<vector<float>>&biasMatrix){
 	vector<vector<float> > result(inputMatrix.size(),vector<float>(weightMatrix[0].size(),0));
-	result = innerProductPthread(inputMatrix,weightMatrix);
-	result = addBias(result,biasMatrix);
+	result = innerProductPthread(inputMatrix,weightMatrix);		// taking the inner product
+	result = addBias(result,biasMatrix);						// adding the bias
 
 
 	return result;
@@ -137,6 +178,126 @@ vector<vector<float>> fullyConnectedPthread(vector<vector<float>> &inputMatrix, 
 
 
 ////////////////////////////////////////////////////////////////////////////////
+
+
+
+void mklmult(string infile1, string infile2, string outfile){
+  ofstream ofs;
+  ofs.open(outfile);
+  ifstream ifsInputMatrices,ifsWeightMatrices;
+  ifsInputMatrices.open(infile1);
+  ifsWeightMatrices.open(infile2);
+//  ifsBiasMatrices.open("biasMatrices.txt");
+  
+  int n,m,k;
+  double *A , *B , *C, *D; 
+  string s;
+
+    ifsInputMatrices>>s;
+    m = stoi(s);    //assuming the input file stores no of rows in the first line
+    ifsInputMatrices>>s;
+    k = stoi(s);
+    A = (double *) malloc( sizeof(double) * m * k ); // inputmatrix
+    for(int i=0;i<m*k;i++){
+      ifsInputMatrices>>s;
+      A[i] = stof(s);
+    }
+
+    ifsWeightMatrices>>s;
+    k = stoi(s);
+    ifsWeightMatrices>>s;
+    n = stoi(s);
+
+    B = (double *) malloc( sizeof(double) * k * n ); // weightmatrix
+    for(int i=0;i<k*n;i++){
+      ifsWeightMatrices>>s;
+      B[i] = stof(s);
+    }
+
+    C = (double *) malloc( sizeof(double) * m * n ); // for storing the result matrix
+
+
+    //time_start = chrono::high_resolution_clock::now();
+
+    cblas_dgemm ( CblasRowMajor, CblasNoTrans, CblasNoTrans , m , n , k , 1.0 , A , k , B , n , 0.0 , C , n );         // parameters for cblas_dgemm function
+
+   // time_end = chrono::high_resolution_clock::now();
+    //mkl_time = chrono::duration_cast<chrono::nanoseconds>(time_end - time_start).count();
+    //mkl_time*= 1e-9;
+    //ofs<<mkl_time<<"\n";  // total time will be the time for product and addition of bias
+
+    //writing the dimensions of the result matrix into the output file
+    ofs << m << endl ;  
+    ofs << n << endl ;
+
+    //writing the result matrix in column major form into the output file
+    for(int i=0;i<m*n;i++){
+      ofs << C[i] << endl;
+    }
+
+}
+////////////////////////////////////////////////////////////////////////////////
+
+
+
+void openblasmult(string infile1, string infile2, string outfile){
+  ofstream ofs;
+  ofs.open(outfile);
+  ifstream ifsInputMatrices,ifsWeightMatrices;
+  ifsInputMatrices.open(infile1);
+  ifsWeightMatrices.open(infile2);
+//  ifsBiasMatrices.open("biasMatrices.txt");
+  
+  int n,m,k;
+  double *A , *B , *C, *D; 
+  string s;
+
+    ifsInputMatrices>>s;
+    m = stoi(s);    //assuming the input file stores no of rows in the first line
+    ifsInputMatrices>>s;
+    k = stoi(s);
+    A = (double *) malloc( sizeof(double) * m * k ); // inputmatrix
+    for(int i=0;i<m*k;i++){
+      ifsInputMatrices>>s;
+      A[i] = stof(s);
+    }
+
+    ifsWeightMatrices>>s;
+    k = stoi(s);
+    ifsWeightMatrices>>s;
+    n = stoi(s);
+
+    B = (double *) malloc( sizeof(double) * k * n ); // weightmatrix
+    for(int i=0;i<k*n;i++){
+      ifsWeightMatrices>>s;
+      B[i] = stof(s);
+    }
+
+    C = (double *) malloc( sizeof(double) * m * n ); // for storing the result matrix
+
+
+    //time_start = chrono::high_resolution_clock::now();
+
+    cblas_dgemm ( CblasRowMajor, CblasNoTrans, CblasNoTrans , m , n , k , 1.0 , A , k , B , n , 0.0 , C , n );         // parameters for cblas_dgemm function
+
+   // time_end = chrono::high_resolution_clock::now();
+    //mkl_time = chrono::duration_cast<chrono::nanoseconds>(time_end - time_start).count();
+    //mkl_time*= 1e-9;
+    //ofs<<mkl_time<<"\n";  // total time will be the time for product and addition of bias
+
+    //writing the dimensions of the result matrix into the output file
+    ofs << m << endl ;  
+    ofs << n << endl ;
+
+    //writing the result matrix in column major form into the output file
+    for(int i=0;i<m*n;i++){
+      ofs << C[i] << endl;
+    }
+
+}
+/////////////////////////////////////////////////////////////
+
+
 
 
 
