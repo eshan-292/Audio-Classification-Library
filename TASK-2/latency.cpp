@@ -30,7 +30,6 @@ float standardDeviation(vector<float> &v){			// function which takes a vector(po
 }
 
 
-using namespace std;
 
 
 

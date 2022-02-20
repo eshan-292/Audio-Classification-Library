@@ -1,5 +1,10 @@
-all: pthreadtest.out basicmultiplicationtest.out randommatrixgeneration.out latency.out
+all: pthreadtest.out basicmultiplicationtest.out randommatrixgeneration.out latency.out meanstdsamesize.out latenciesoversamesize.out
 
+latenciesoversamesize.out: basicmultiplication.o fullyconnectedpthread.o helper.o inputoutput.o latenciesoversamesize.cpp
+	g++ basicmultiplication.o fullyconnectedpthread.o helper.o inputoutput.o latenciesoversamesize.cpp -o latenciesoversamesize.out -pthread
+
+meanstdsamesize.out: meanstdsamesize.cpp
+	g++ meanstdsamesize.cpp -o meanstdsamesize.out
 
 pthreadtest.out: fullyconnectedpthread.o inputoutput.o pthreadtest.cpp
 	g++ inputoutput.o helper.o fullyconnectedpthread.o pthreadtest.cpp -pthread -o pthreadtest.out
