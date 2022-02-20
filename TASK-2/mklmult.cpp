@@ -67,7 +67,7 @@ void mklmult(string f1, string f2, string f3, string f4){
       D[i] = stof(s);
     }
 
-    cblas_sgemm (CblasColMajor, CblasNoTrans, CblasNoTrans , m , n , k , 1.0 , A , m , B , k , 0.0 , C , m );
+    cblas_sgemm (CblasColMajor, CblasNoTrans, CblasNoTrans , m , n , k , 1.0 , A , m , B , k , 0.0 , C , m );   // calling cblas_sgemm function with appropriate arguments
     
     for(int i=0;i<m*n;i++){
       C[i]+=D[i];             // add to the product bias

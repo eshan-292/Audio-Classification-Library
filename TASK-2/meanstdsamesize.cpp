@@ -39,37 +39,37 @@ int main(int argc, char const *argv[])
 
 	string s;
 
-	for(int i=1;i<=sizes.size();i++){
+	for(int i=1;i<=sizes.size();i++){							// for each matrix of size- size[i] getting the mean and standard deviation for 100 runs for different implementations
 		ifstream ifsBasic;
-		cout<<"Over matrix of size "<<sizes[i-1]<<", "<<sizes[i-1]<<"\n";
+		cout<<"Over matrix of size "<<sizes[i-1]<<", "<<sizes[i-1]<<"\n";	
 		vector <float> basicTimes;
 		ifsBasic.open("m"+to_string(i)+"basicMult.dat");
 		for(int j=0;j<100;j++){
 			getline(ifsBasic,s);
-			basicTimes.push_back(stof(s.substr(4)));
+			basicTimes.push_back(stof(s.substr(4)));			// getting the time for each run in a vector
 		}
 		cout<<"Basic implementation\n";
-		cout<<"Mean - "<<mean(basicTimes)<<" Std - "<<standardDeviation(basicTimes)<<"\n";
+		cout<<"Mean - "<<mean(basicTimes)<<" Std - "<<standardDeviation(basicTimes)<<"\n";	// computing mean and std of the vector and printing the output
 
 		ifstream ifsPthread;
 		vector <float> pthreadTimes;
 		ifsPthread.open("m"+to_string(i)+"pthread.dat");
 		for(int j=0;j<100;j++){
 			getline(ifsPthread,s);
-			pthreadTimes.push_back(stof(s.substr(4)));
+			pthreadTimes.push_back(stof(s.substr(4)));  		// getting the time for each run in a vector
 		}
 		cout<<"Pthread implementation\n";
-		cout<<"Mean - "<<mean(pthreadTimes)<<" Std - "<<standardDeviation(pthreadTimes)<<"\n";
+		cout<<"Mean - "<<mean(pthreadTimes)<<" Std - "<<standardDeviation(pthreadTimes)<<"\n"; // computing mean and std of the vector and printing the output
 
 		ifstream ifsmkl;
 		vector <float> mklTimes;
 		ifsmkl.open("m"+to_string(i)+"mkl.dat");
 		for(int j=0;j<100;j++){
 			getline(ifsmkl,s);
-			mklTimes.push_back(stof(s.substr(4)));
+			mklTimes.push_back(stof(s.substr(4)));				// getting the time for each run in a vector
 		}
 		cout<<"Mkl implementation\n";
-		cout<<"Mean - "<<mean(mklTimes)<<" Std - "<<standardDeviation(mklTimes)<<"\n";
+		cout<<"Mean - "<<mean(mklTimes)<<" Std - "<<standardDeviation(mklTimes)<<"\n";   		// computing mean and std of the vector and printing the output
 
 
 		ifstream ifsOpenBlas;
@@ -77,10 +77,10 @@ int main(int argc, char const *argv[])
 		ifsOpenBlas.open("m"+to_string(i)+"openblas.dat");
 		for(int j=0;j<100;j++){
 			getline(ifsOpenBlas,s);
-			openBlasTimes.push_back(stof(s.substr(4)));
+			openBlasTimes.push_back(stof(s.substr(4)));			// getting the time for each run in a vector
 		}
 		cout<<"Openblas implementation\n";
-		cout<<"Mean - "<<mean(openBlasTimes)<<" Std - "<<standardDeviation(openBlasTimes)<<"\n";
+		cout<<"Mean - "<<mean(openBlasTimes)<<" Std - "<<standardDeviation(openBlasTimes)<<"\n";// computing mean and std of the vector and printing the output
 		
 	}
 
