@@ -7,7 +7,7 @@
 #include "fullyconnectedpthread.h"
 #include "helper.h"
 #include "inputoutput.h"
-#include "mklmult.h"
+// #include "mklmult.h"
 #include "openblasmult.h"
 
 using namespace std;
@@ -43,7 +43,7 @@ int main(int argc, char const *argv[])
 	    }
 	    else if(strcmp(argv[6],"mkl")==0){
 			string f1=argv[2], f2=argv[3], f3=argv[4], f4=argv[5] ;
-			mklmult(f1,f2,f3,f4) ;			
+			// mklmult(f1,f2,f3,f4) ;			
 	    }
 	    else if(strcmp(argv[6],"openblas")==0){
 			string f1=argv[2], f2=argv[3], f3=argv[4], f4=argv[5] ;

@@ -1,4 +1,4 @@
-#include </home/eshan/OpenBLAS/cblas.h>
+// #include </home/eshan/OpenBLAS/cblas.h>
 #include <stdio.h>
 #include <sys/time.h>
 #include <fstream>
@@ -10,6 +10,7 @@
 #include <iomanip>
 #include <chrono>
 #include <vector>
+#include <cblas.h>
 
 using namespace std;
 

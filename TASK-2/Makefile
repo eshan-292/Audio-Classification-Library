@@ -1,7 +1,7 @@
 all: pthreadtest.out basicmultiplicationtest.out randommatrixgeneration.out latency.out meanstdsamesize.out latenciesoversamesize.out
 
 latenciesoversamesize.out: basicmultiplication.o fullyconnectedpthread.o helper.o inputoutput.o latenciesoversamesize.cpp
-	g++ basicmultiplication.o fullyconnectedpthread.o helper.o inputoutput.o latenciesoversamesize.cpp -o latenciesoversamesize.out -pthread
+	g++ basicmultiplication.o fullyconnectedpthread.o helper.o inputoutput.o latenciesoversamesize.cpp -o latenciesoversamesize.out -pthread -I /your_path/OpenBLAS/include/ -L/your_path/OpenBLAS/lib -lopenblas -lpthread -lgfortran
 
 meanstdsamesize.out: meanstdsamesize.cpp
 	g++ meanstdsamesize.cpp -o meanstdsamesize.out

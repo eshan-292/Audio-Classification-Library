@@ -9,8 +9,9 @@
 #include <iomanip>
 #include <chrono>
 //#include </opt/homebrew/opt/openblas/include/cblas.h>
-#include </home/eshan/OpenBLAS/cblas.h>
-#include "openblasmult.h"
+// #include </home/eshan/OpenBLAS/cblas.h>
+// #include "openblasmult.h"
+#include <cblas.h>
 
 
  

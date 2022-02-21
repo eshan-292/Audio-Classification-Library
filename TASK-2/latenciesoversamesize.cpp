@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include <vector>
+#include <cblas.h>
 #include <cstring>
 #include <fstream>
 #include <chrono>
@@ -14,12 +15,12 @@
 
 int main(int argc, char const *argv[])
 {
-	float *A,*C;
+	float *A,*C,*B;
 	A = (float *) malloc( sizeof(float) * 402* 402);
+	B = (float *) malloc( sizeof(float) * 402* 402);
 	C =  (float *) malloc( sizeof(float) * 402* 402);
 	vector<string> matrixnames = {"m1", "m2", "m3", "m4", "m5", "m6"};
 	vector<int> sizes = {-200,150,500,850,1200,1550};			// these are the x coordinates of the point about which each boxplot is going to be centered(Helps in avoiding overlap between various boxplot)
-	ifstream matrixstream;
 	string s;
 		//basicMult
 
@@ -60,6 +61,7 @@ int main(int argc, char const *argv[])
 
 
 		int k,m;
+		ifstream matrixstream;
 		matrixstream.open(filename);
 		matrixstream>>s;
 		k = stoi(s);
@@ -70,6 +72,7 @@ int main(int argc, char const *argv[])
 		for(int i=0;i<m*k;i++){												// getting matrix1 in column major format 
 			matrixstream>>s;
 			A[i] = stof(s);
+			B[i] = A[i];
 		}
 
 
@@ -95,10 +98,10 @@ int main(int argc, char const *argv[])
 		ofsopenblas.open(matrixnames[j]+"openblas.dat");
 		for(int i=0;i<100;i++){
 			time_start = chrono::high_resolution_clock::now();               // getting the time of computation for 100 runs of openblas implementation on the given matrix
+			cblas_sgemm (CblasColMajor, CblasNoTrans, CblasNoTrans , m , m , k , 1.0 , A , m , B , m , 0.0 , C , m );   // calling cblas_sgemm function with appropriate arguments
 			for(int i=0;i<k*m;i++){
 				C[i]+=A[i];													 // adding bias
 			}
-			// cblas_sgemm (CblasColMajor, CblasNoTrans, CblasNoTrans , m , n , k , 1.0 , A , m , B , k , 0.0 , C , m );  				// input bias weight matrix are assumed to be same
 			time_end = chrono::high_resolution_clock::now();
 			openblas_time = chrono::duration_cast<chrono::nanoseconds>(time_end - time_start).count();
 			openblas_time*= 1e-9;
