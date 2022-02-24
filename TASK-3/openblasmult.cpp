@@ -20,6 +20,7 @@ using namespace std;
 
 namespace OPENBLAS{
   float* openblasmult(float*A, float*B, float*D, int m, int k, int n){
+      float*C =  (float *) malloc( sizeof(float) * m* n );
 
       cblas_sgemm (CblasColMajor, CblasNoTrans, CblasNoTrans , m , n , k , 1.0 , A , m , B , k , 0.0 , C , m );
 
