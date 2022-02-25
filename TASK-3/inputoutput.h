@@ -4,6 +4,6 @@ using namespace std;
 #define INPUTOUTPUT_H
 
 
-float* getMatrix(string filename);
+float* getMatrixOfFixedSize(string filename);
 
 #endif
