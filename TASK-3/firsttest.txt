@@ -1,0 +1,2 @@
+mfcc_features/25e95412_nohash_4.txt silence yes right 0.981257 0.491295 0.425019
+mfcc_features/25e95412_nohash_4.txt silence yes right 0.981257 0.491295 0.425019

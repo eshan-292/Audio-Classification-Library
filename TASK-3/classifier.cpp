@@ -1,13 +1,13 @@
 #include <iostream>
 #include <fstream>
 
-//#include "classfier.h"
+#include "classifier.h"
 
 using namespace std;
 
 
 
-void classify(float* probabilities, int size, string outputFile){
+void classify(float* probabilities, int size, string outputFile, string inputFile){
   string keywords[12] =  {"silence", "unknown", "yes", "no", "up", "down", "left", "right", "on", "off", "stop", "go"};
 
   ofstream outputStream;
@@ -34,5 +34,10 @@ void classify(float* probabilities, int size, string outputFile){
     j++ ;
     prob[curri]=0 ;         //dumping the max probability , so that the next maximum can be calculated in the next iteration
     }
+    for(int i=0;i<12;i++){
+      cout<<probabilities[i]<<" ";
+    }
+    cout<<"\n";
+    outputStream << inputFile << " ";
     outputStream << keywords[ansind[0]] << " " << keywords[ansind[1]] << " " << keywords[ansind[2]] << " " << probabilities[ansind[0]] << " " << probabilities[ansind[1]] << " " << probabilities[ansind[2]] << endl;
 }

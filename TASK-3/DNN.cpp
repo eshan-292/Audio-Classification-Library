@@ -11,6 +11,7 @@ float* DNN (string inputVectorFile ){
   float * fc1WeightMatrix = new float [250*144] IP1_WT;
   float * fc1BiasMatrix = new float [1*144] IP1_BIAS;
   float * result_1 = OPENBLAS::openblasmult(inputMatrix, fc1WeightMatrix, fc1BiasMatrix, 1, 250, 144);
+  // cout<<"WORKS\n";
   relu(result_1, 1, 144);
   float * fc2WeightMatrix = new float [144*144] IP2_WT;
   float * fc2BiasMatrix = new float [1*144] IP2_BIAS;
