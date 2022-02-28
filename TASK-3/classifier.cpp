@@ -6,12 +6,17 @@
 using namespace std;
 
 
+struct pred_t{
+    int label;
+    float prob;
+};
 
-void classify(float* probabilities, int size, string outputFile, string inputFile){
+
+pred_t* classify(float* probabilities, int size, string outputFile, string inputFile){
   string keywords[12] =  {"silence", "unknown", "yes", "no", "up", "down", "left", "right", "on", "off", "stop", "go"};
 
-  ofstream outputStream;
-  outputStream.open(outputFile, ios_base::app);
+  //ofstream outputStream;
+  //outputStream.open(outputFile, ios_base::app);
     float prob[size] ;
     for(int i=0;i<size;i++){
         prob[i]=probabilities[i] ;
@@ -38,6 +43,12 @@ void classify(float* probabilities, int size, string outputFile, string inputFil
       cout<<probabilities[i]<<" ";
     }
     cout<<"\n";
-    outputStream << inputFile << " ";
-    outputStream << keywords[ansind[0]] << " " << keywords[ansind[1]] << " " << keywords[ansind[2]] << " " << probabilities[ansind[0]] << " " << probabilities[ansind[1]] << " " << probabilities[ansind[2]] << endl;
+  pred_t ans[3] ;
+    for(int i=0;i<3;i++){
+        ans[i].label = ansind[i] ;
+        ans[i].prob = probabilities[ansind[i]] ;
+    }
+  return ans ;
+    //outputStream << inputFile << " ";
+    //outputStream << keywords[ansind[0]] << " " << keywords[ansind[1]] << " " << keywords[ansind[2]] << " " << probabilities[ansind[0]] << " " << probabilities[ansind[1]] << " " << probabilities[ansind[2]] << endl;
 }
