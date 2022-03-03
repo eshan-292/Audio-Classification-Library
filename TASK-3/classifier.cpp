@@ -1,5 +1,7 @@
 #include <iostream>
 #include <fstream>
+#include <map>
+
 
 #include "classifier.h"
 
@@ -12,7 +14,8 @@ void classify(float* probabilities, int size, string outputFile, string inputFil
 
   ofstream outputStream;
   outputStream.open(outputFile, ios_base::app);
-    float prob[size] ;
+    //float prob[size] ;
+    map <int, float> prob ;
     for(int i=0;i<size;i++){
         prob[i]=probabilities[i] ;
     }
